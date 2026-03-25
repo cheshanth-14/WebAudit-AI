@@ -35,7 +35,7 @@ app.post('/api/audit', async (req, res) => {
 
     // Step 3 & 4: Analyze with Google Gemini
     console.log('2. Analyzing with Google Gemini...');
-    const aiAnalysisResult = await analyzeAuditedData(url, metrics, pageContext);
+    const aiAnalysisResult = await analyzeAuditedData({ url, metrics, pageContext }, model);
 
     // Step 5: Return complete payload
     console.log('Audit complete.');

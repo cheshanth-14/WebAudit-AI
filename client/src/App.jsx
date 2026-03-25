@@ -1,15 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import MetricsPanel from './components/MetricsPanel';
 import InsightsPanel from './components/InsightsPanel';
 import RecommendationsPanel from './components/RecommendationsPanel';
 import PromptLogs from './components/PromptLogs';
-import { Search, Loader2, AlertCircle } from 'lucide-react';
+import { Search, Loader2, AlertCircle, ChevronDown, Cpu, Zap, Beaker } from 'lucide-react';
+
+const ModelSelector = ({ selected, onSelect, disabled }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const models = [
+    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', desc: 'Fastest & Reliable', icon: Zap, color: 'text-aurora' },
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', desc: 'Advanced Logic', icon: Cpu, color: 'text-polar' },
+    { id: 'gemini-2.0-flash-lite-preview-02-05', name: 'Gemini 2.0 Lite', desc: 'High Efficiency', icon: Beaker, color: 'text-cosmic' }
+  ];
+
+  const current = models.find(m => m.id === selected) || models[0];
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setIsOpen(!isOpen)}
+        className="h-full px-6 py-5 rounded-2xl text-slate-100 bg-[#121b2e]/60 backdrop-blur-xl border border-white/10 hover:border-aurora/50 focus:outline-none transition-all flex items-center gap-3 min-w-[240px] group shadow-xl"
+      >
+        <current.icon className={`w-5 h-5 ${current.color}`} />
+        <div className="flex flex-col items-start leading-tight">
+          <span className="text-sm font-bold tracking-tight">{current.name}</span>
+          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{current.desc}</span>
+        </div>
+        <ChevronDown className={`w-4 h-4 ml-auto text-slate-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 mt-3 bg-[#0b1120]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          {models.map((model) => (
+            <button
+              key={model.id}
+              type="button"
+              onClick={() => {
+                onSelect(model.id);
+                setIsOpen(false);
+              }}
+              className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-white/5 transition-colors text-left border-b border-white/[0.05] last:border-0 ${selected === model.id ? 'bg-white/[0.03]' : ''}`}
+            >
+              <model.icon className={`w-5 h-5 ${model.color}`} />
+              <div className="flex flex-col">
+                <span className={`text-sm font-bold ${selected === model.id ? 'text-white' : 'text-slate-300'}`}>{model.name}</span>
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{model.desc}</span>
+              </div>
+              {selected === model.id && (
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-aurora shadow-[0_0_10px_#22C4A0]"></div>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 function App() {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [selectedModel, setSelectedModel] = useState('gemini-1.5-flash');
+  const [selectedModel, setSelectedModel] = useState('gemini-2.0-flash');
   const [auditData, setAuditData] = useState(null);
 
   const handleAudit = async (e) => {
@@ -57,8 +123,8 @@ function App() {
 
   return (
     <div className="min-h-screen pb-20 selection:bg-polar/30">
-      {/* Premium Header */}
-      <header className="relative overflow-hidden pt-20 pb-32 px-6 text-center border-b border-cosmic/20 bg-[#0b1120]/80 backdrop-blur-md">
+      {/* Premium Header - Updated z-index and removed overflow-hidden to allow dropdown visibility */}
+      <header className="relative z-50 pt-20 pb-32 px-6 text-center border-b border-cosmic/20 bg-[#0b1120]/80 backdrop-blur-md">
         <div className="absolute inset-0 bg-gradient-to-b from-cosmic/10 to-transparent"></div>
         <div className="relative z-10">
           <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight bg-gradient-to-br from-white to-slate-300 text-transparent bg-clip-text font-display drop-shadow-sm">
@@ -68,7 +134,7 @@ function App() {
             AI-powered website analysis by EIGHT25MEDIA. Enter any URL to extract factual SEO metrics and receive a structured, data-driven critique from Google Gemini.
           </p>
           
-          <form onSubmit={handleAudit} className="mt-12 max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 relative">
+          <form onSubmit={handleAudit} className="mt-12 max-w-5xl mx-auto flex flex-col lg:flex-row gap-4 relative">
             <div className="relative flex-1 group">
               <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none z-10 text-slate-500 group-focus-within:text-aurora transition-colors">
                 <Search className="h-6 w-6" />
@@ -84,20 +150,11 @@ function App() {
               />
             </div>
 
-            <div className="relative">
-              <select
-                value={selectedModel}
-                onChange={(e) => setSelectedModel(e.target.value)}
-                disabled={loading}
-                className="h-full px-6 py-5 rounded-2xl text-slate-100 bg-[#121b2e]/60 backdrop-blur-md border border-polar/30 focus:border-aurora focus:outline-none cursor-pointer text-sm font-semibold transition-all appearance-none outline-none min-w-[180px]"
-              >
-                <option value="gemini-1.5-flash">Gemini 1.5 Flash (Reliable)</option>
-                <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fastest)</option>
-              </select>
-              <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-500">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-              </div>
-            </div>
+            <ModelSelector 
+              selected={selectedModel} 
+              onSelect={setSelectedModel} 
+              disabled={loading} 
+            />
 
             <button
               type="submit"
