@@ -66,13 +66,13 @@ function App() {
           
           <form onSubmit={handleAudit} className="mt-12 max-w-3xl mx-auto flex flex-col sm:flex-row gap-4 relative">
             <div className="relative flex-1 group">
-              <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none transition-colors group-focus-within:text-aurora">
-                <Search className="h-5 w-5 text-slate-500" />
+              <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none z-10 text-slate-500 group-focus-within:text-aurora transition-colors">
+                <Search className="h-6 w-6" />
               </div>
               <input
                 type="text"
                 required
-                className="w-full pl-14 pr-6 py-5 rounded-2xl text-slate-100 bg-[#121b2e]/60 backdrop-blur-md border border-polar/30 focus:border-aurora focus:outline-none focus:ring-4 focus:ring-aurora/20 text-lg shadow-xl outline-none transition-all placeholder-slate-500"
+                className="w-full pl-16 pr-6 py-5 rounded-2xl text-slate-100 bg-[#121b2e]/60 backdrop-blur-md border border-polar/30 focus:border-aurora focus:outline-none focus:ring-4 focus:ring-aurora/20 text-lg shadow-xl outline-none transition-all placeholder-slate-500 relative z-0"
                 placeholder="https://example.com"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
@@ -132,17 +132,21 @@ function App() {
               <MetricsPanel metrics={auditData.metrics} />
             </div>
 
-            <div className="lg:col-span-8 space-y-8">
-              {/* Section 3: AI Insights */}
-              <InsightsPanel insights={auditData.ai_insights} />
-
-              {/* Section 4: Recommendations */}
-              <RecommendationsPanel recommendations={auditData.ai_insights.recommendations} />
+            <div className="lg:col-span-8 space-y-8 flex flex-col items-center">
+              {/* Section 4: Recommendations - MOVED UP and centered in its container */}
+              <div className="w-full">
+                <RecommendationsPanel recommendations={auditData.ai_insights.recommendations} />
+              </div>
             </div>
           </div>
 
-          {/* Section 5: Prompt Logs */}
-          <div className="pt-8">
+          {/* Section 3: AI Insights - Moved OUT of the grid for full screen centering */}
+          <div className="w-full">
+            <InsightsPanel insights={auditData.ai_insights} />
+          </div>
+
+          {/* Section 5: Prompt Logs - Centered */}
+          <div className="pt-8 max-w-4xl mx-auto w-full">
             <PromptLogs logs={auditData.prompt_log} />
           </div>
           
