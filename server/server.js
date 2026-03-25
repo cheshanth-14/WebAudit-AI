@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.post('/api/audit', async (req, res) => {
-  const { url } = req.body;
+  const { url, model = 'gemini-1.5-flash' } = req.body;
 
   if (!url) {
     return res.status(400).json({ error: 'URL is required' });
@@ -27,7 +27,7 @@ app.post('/api/audit', async (req, res) => {
   }
 
   try {
-    console.log(`Starting audit for ${url}...`);
+    console.log(`[${new Date().toLocaleTimeString()}] Starting audit for ${url} using ${model}...`);
 
     // Step 1 & 2: Scrape the page
     console.log('1. Scraping website...');

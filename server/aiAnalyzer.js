@@ -3,20 +3,23 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env' });
 
-export async function analyzeAuditedData(url, metrics, pageContext) {
+export async function analyzeAuditedData(data, selectedModel = "gemini-1.5-flash") {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('GEMINI_API_KEY is missing from environment variables. Please get a free key from Google AI Studio.');
+    throw new Error('GEMINI_API_KEY is not set in environment variables');
   }
 
+  const { url, metrics, pageContext } = data;
+
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Gemini 2.5 Flash is extremely fast and free to use!
   const model = genAI.getGenerativeModel({ 
-    model: "gemini-2.5-flash",
+    model: String(selectedModel),
     generationConfig: {
-      temperature: 0.0, // Zero temperature for completely deterministic responses
-      topK: 1,          // Only consider the absolute top most likely word
-      topP: 0.1         // Strictly narrow down the sampling distribution
+      temperature: 0.1,
+      topP: 0.95,
+      topK: 40,
+      maxOutputTokens: 2048,
+      responseMimeType: "application/json",
     }
   });
 
@@ -137,7 +140,6 @@ Based on this data, respond with a JSON object in EXACTLY this structure:
     // Parse JSON safely
     let parsedJson;
     try {
-      // Find JSON block just in case Gemini included markdown fences despite instructions
       const jsonMatch = rawOutput.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         parsedJson = JSON.parse(jsonMatch[0]);

@@ -9,6 +9,7 @@ function App() {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedModel, setSelectedModel] = useState('gemini-1.5-flash');
   const [auditData, setAuditData] = useState(null);
 
   const handleAudit = async (e) => {
@@ -31,7 +32,10 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url: targetUrl }),
+        body: JSON.stringify({ 
+          url: targetUrl,
+          model: selectedModel 
+        }),
       });
 
       const data = await response.json();
@@ -64,7 +68,7 @@ function App() {
             AI-powered website analysis by EIGHT25MEDIA. Enter any URL to extract factual SEO metrics and receive a structured, data-driven critique from Google Gemini.
           </p>
           
-          <form onSubmit={handleAudit} className="mt-12 max-w-3xl mx-auto flex flex-col sm:flex-row gap-4 relative">
+          <form onSubmit={handleAudit} className="mt-12 max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 relative">
             <div className="relative flex-1 group">
               <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none z-10 text-slate-500 group-focus-within:text-aurora transition-colors">
                 <Search className="h-6 w-6" />
@@ -79,10 +83,26 @@ function App() {
                 disabled={loading}
               />
             </div>
+
+            <div className="relative">
+              <select
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                disabled={loading}
+                className="h-full px-6 py-5 rounded-2xl text-slate-100 bg-[#121b2e]/60 backdrop-blur-md border border-polar/30 focus:border-aurora focus:outline-none cursor-pointer text-sm font-semibold transition-all appearance-none outline-none min-w-[180px]"
+              >
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash (Reliable)</option>
+                <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fastest)</option>
+              </select>
+              <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-500">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={loading}
-              className="px-8 py-5 bg-gradient-to-r from-polar to-cosmic hover:from-polar/90 hover:to-cosmic/90 text-white font-semibold rounded-2xl transition-all shadow-[0_0_20px_rgba(61,111,160,0.4)] hover:shadow-[0_0_30px_rgba(93,58,128,0.5)] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center min-w-[200px] border border-cosmic/50 relative overflow-hidden group"
+              className="px-8 py-5 bg-gradient-to-r from-polar to-cosmic hover:from-polar/90 hover:to-cosmic/90 text-white font-semibold rounded-2xl transition-all shadow-[0_0_20px_rgba(61,111,160,0.4)] hover:shadow-[0_0_30px_rgba(93,58,128,0.5)] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center min-w-[180px] border border-cosmic/50 relative overflow-hidden group"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-aurora/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               {loading ? (
