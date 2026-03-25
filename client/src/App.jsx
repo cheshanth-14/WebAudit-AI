@@ -229,6 +229,12 @@ function App() {
           
         </main>
       )}
+      {/* Custom Copyright Footer */}
+      <footer className="mt-20 py-12 border-t border-cosmic/10 text-center">
+        <p className="text-slate-500 text-sm font-medium tracking-widest uppercase">
+          © 2026 Cheshanth
+        </p>
+      </footer>
     </div>
   );
 }
