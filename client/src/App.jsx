@@ -59,7 +59,7 @@ function App() {
           WebAudit AI
         </h1>
         <p className="text-slate-300 text-lg max-w-2xl mx-auto">
-          AI-powered website analysis by EIGHT25MEDIA. Enter any URL to extract factual SEO metrics and receive a structured, data-driven critique from Claude 3.5 Sonnet.
+          AI-powered website analysis by EIGHT25MEDIA. Enter any URL to extract factual SEO metrics and receive a structured, data-driven critique from Google Gemini.
         </p>
         
         <form onSubmit={handleAudit} className="mt-10 max-w-3xl mx-auto flex flex-col sm:flex-row gap-3">
