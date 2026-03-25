@@ -13,7 +13,7 @@
     "dev": "npx concurrently \"npm run server\" \"npm run client\""
   },
   "dependencies": {
-    "anthropic-ai": "^0.33.1",
+    "@anthropic-ai/sdk": "^0.33.1",
     "@google/generative-ai": "^0.24.1",
     "axios": "^1.7.9",
     "cheerio": "^1.0.0",
