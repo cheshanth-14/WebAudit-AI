@@ -1,0 +1,26 @@
+{
+  "name": "website-audit-tool",
+  "version": "1.0.0",
+  "description": "AI-powered Website Audit Tool",
+  "main": "server/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "npx nodemon server/server.js",
+    "client": "npm run dev --prefix client",
+    "dev": "npx concurrently \"npm run server\" \"npm run client\""
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.33.1",
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.9"
+  }
+}

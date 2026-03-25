@@ -1,0 +1,11 @@
+node_modules
+.env
+.env.*
+!.env.example
+test_output.json
+*.log
+error.txt
+error_clean.txt
+models.json
+test-gemini.js
+.DS_Store
