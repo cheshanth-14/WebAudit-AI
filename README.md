@@ -1,82 +1,62 @@
-# WebAudit AI
+# WebAudit AI — Premium Site Analysis Dashboard
 
-## 1. Project Overview
-WebAudit AI is a complete, single-page web application that performs automated website audits. It takes a URL, extracts factual on-page SEO metrics using Cheerio, and sends this data alongside the page content to Anthropic's Claude AI for structured, professional analysis.
+**WebAudit AI** is a high-end, agency-standard website auditing tool powered by Google Gemini. It captures real-time SEO and UX metrics from any URL and provides a deep, data-driven AI analysis using a multi-model failover system.
 
-The tool provides an "Agency-level" report split into:
-- Scraped Metrics (Word count, Links, Meta Tags, etc.)
-- Overall Score
-- AI Insights (SEO, Messaging, UX, CTAs)
-- Prioritized Actionable Recommendations
+---
 
-## 2. Setup Instructions
+## 🚀 Key Features
 
-### Prerequisites
-- Node.js (v18+ recommended)
-- Your own Anthropic API Key
+*   **Symmetric Design Language**: A "Center-Weighted" luxury dashboard featuring a custom 2+2+1 symmetric card layout for all insights and recommendations.
+*   **Multi-Model Toggle**: A stylish, glassmorphic dropdown to swap between **Gemini 2.0 Flash**, **Gemini 2.5 Flash**, and **Gemini 2.0 Lite** on-the-fly to manage API quotas.
+*   **Deep Marketing Analysis**: Segmented breakdown across 5 key performance areas (SEO, Messaging, CTAs, Content Depth, and UX).
+*   **Factual Metric Internalization**: AI and Scraper are fully synced – the AI critiques the exact word counts, heading tags, and load times recorded by the engine.
+*   **Glassmorphic Aesthetic**: A premium dark-mode interface with `backdrop-blur-xl`, subtle gradients, and custom iconography.
 
-### Installation
+---
 
-1. Install all dependencies from root:
+## 🛠️ Technical Stack
+
+*   **Frontend**: React.js, Tailwind CSS, Lucide Icons.
+*   **Backend**: Express.js, Cheerio (Advanced Web Scraping), Axios.
+*   **AI Engine**: Google Generative AI (Gemini 2.0 / 2.5 Flash).
+*   **Design Philosophy**: Mathematical centering, high-end agency aesthetic (EIGHT25MEDIA style).
+
+---
+
+## ⚡ Quick Start
+
+### 1. Prerequisites
+*   Node.js installed.
+*   A Google AI Studio API Key ([Get one here](https://aistudio.google.com/)).
+
+### 2. Environment Setup
+Create a `.env` file in the root directory:
+```env
+PORT=3001
+GEMINI_API_KEY=your_key_here
+```
+
+### 3. Install & Run
+From the root directory:
 ```bash
+# Install dependencies
 npm install
-cd client && npm install
-cd ..
-```
 
-2. Environment Setup:
-Copy the example env file and add your Anthropic API Key.
-```bash
-cp .env.example .env
-```
-Edit `.env` and fill in `ANTHROPIC_API_KEY=sk-ant-api03-...`
-
-3. Run the complete application (Frontend & Backend together):
-```bash
+# Run both Client and Server concurrently
 npm run dev
 ```
+The app will be available at `http://localhost:5173`.
 
-The frontend will start on http://localhost:5173
-The backend server will start on http://localhost:3001
+---
 
-## 3. Architecture Overview
+## 📂 Project Structure
 
-```text
-[ React Frontend ] 
-        |
-        | (POST /api/audit { url })
-        v
-[ Express Backend ] ---> [ Scraper (Cheerio) ]
-        |                   - Fetch HTML
-        |                   - Extract metrics
-        v                   - Extract text
-[ Prompt Builder ]  <------ (Returns Metrics + Content)
-        |
-        | (System + User Prompt)
-        v
-[ Claude API ]
-        | (Structured JSON Response)
-        v
-[ Express Backend ]
-        | (Send aggregated JSON payload)
-        v
-[ React Frontend ] ---> Render UI (Metrics, Insights, Logs)
-```
+*   `/client`: Vite-powered React frontend.
+    *   `/src/components`: Premium UI card and panel components.
+*   `/server`: Node.js backend.
+    *   `scraper.js`: DOM extraction and SSL bypass logic.
+    *   `aiAnalyzer.js`: Dynamic multi-model prompt orchestration.
 
-## 4. AI Design Decisions
-- **Structured JSON Output:** By enforcing a strict JSON schema via the system prompt, the frontend can reliably parse the response and map it into UI components like progress bars and recommendation cards.
-- **Factual Grounding:** Instead of letting the AI hallucinate stats, we extract factual metrics (word counts, tag counts) via code layer and *inject* them into the prompt. The AI acts exclusively as an analyst interpreting real data.
-- **Prompt Separation:** System prompt establishes the persona (EIGHT25MEDIA agency analyst) and constraints. User prompt delivers the factual payload and desired schema.
+---
 
-## 5. Trade-offs
-- **Cheerio vs Puppeteer:** Cheerio is used because it's significantly faster and perfectly extracts standard DOM metrics. However, it cannot execute JavaScript, meaning Client-Side Rendered (CSR-only) pages won't be audited successfully.
-- **Single Page Only:** Expanding this to an entire site crawl requires queuing systems, much higher token limits, and DB storage to maintain state over time.
-
-## 6. What I'd Improve With More Time
-- **Multi-page Crawling:** Implement a queue to crawl entire sitemaps and provide aggregate domain-level insights.
-- **Puppeteer Integration:** Add a headless browser fallback for JS-heavy SPA websites.
-- **Database & Caching:** Connect PostgreSQL or Redis to cache audit results so the same URL doesn't repeatedly consume Anthropic tokens within a short timeframe.
-- **Historical Comparisons:** Allow users to diff today's audit score against last month's to track improvement.
-
-## 7. Prompt Logs Sample
-See the `prompt_logs_sample.md` file in the root directory for an exact example of the system prompt, user prompt, and Claude's raw JSON output.
+**Developed for high-performance marketing agency benchmarks.**
