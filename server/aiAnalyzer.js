@@ -14,7 +14,9 @@ export async function analyzeAuditedData(url, metrics, pageContext) {
   const model = genAI.getGenerativeModel({ 
     model: "gemini-2.5-flash",
     generationConfig: {
-      temperature: 0.2, // Low temperature for consistent JSON data analysis
+      temperature: 0.0, // Zero temperature for completely deterministic responses
+      topK: 1,          // Only consider the absolute top most likely word
+      topP: 0.1         // Strictly narrow down the sampling distribution
     }
   });
 
