@@ -93,7 +93,8 @@ function App() {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/api/audit', {
+      // Use relative path for Vercel serverless function compatibility
+      const response = await fetch('/api/audit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
