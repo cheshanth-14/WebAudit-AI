@@ -16,40 +16,65 @@ const ScoreBar = ({ score }) => {
   );
 };
 
-const CategoryCard = ({ title, data }) => (
-  <div className="w-full bg-[#121b2e]/40 p-10 rounded-[32px] border border-white/[0.04] shadow-2xl backdrop-blur-xl group flex flex-col items-center text-center h-full">
-    <div className="mb-6 space-y-2">
-      <p className="text-[10px] font-black tracking-[0.4em] text-slate-500 uppercase">Analysis Segment</p>
-      <h3 className="text-3xl font-bold text-white tracking-tight group-hover:text-aurora transition-colors">{title.replace('_', ' ')}</h3>
-    </div>
-    
-    <div className="flex flex-col items-center mb-8">
-      <div className="text-5xl font-black text-white font-display mb-2 drop-shadow-md">
-        {data.score}
-        <span className="text-base text-slate-500 font-bold ml-1 opacity-40">/10</span>
-      </div>
-      <ScoreBar score={data.score} />
-    </div>
+// Recursive helper to extract the best possible string from a value
+const safeRender = (val) => {
+  if (!val) return null;
+  if (typeof val === 'string') return val;
+  if (typeof val === 'number') return val.toString();
+  if (typeof val === 'object') {
+    return val.detail || val.description || val.summary || val.text || val.content || JSON.stringify(val);
+  }
+  return String(val);
+};
 
-    <div className="mb-10 text-center flex-1">
-      <p className="text-lg text-slate-300 leading-relaxed font-light italic">
-        {data.summary}
-      </p>
+const CategoryCard = ({ title, data }) => {
+  const getFindings = () => {
+    if (!data?.findings) return [];
+    if (typeof data.findings === 'string') return [data.findings];
+    if (Array.isArray(data.findings)) return data.findings;
+    return [];
+  };
+  
+  const findings = getFindings();
+
+  return (
+    <div className="w-full bg-[#121b2e]/40 p-10 rounded-[32px] border border-white/[0.04] shadow-2xl backdrop-blur-xl group flex flex-col items-center text-center h-full">
+      <div className="mb-6 space-y-2">
+        <p className="text-[10px] font-black tracking-[0.4em] text-slate-500 uppercase">Analysis Segment</p>
+        <h3 className="text-3xl font-bold text-white tracking-tight group-hover:text-aurora transition-colors">{title?.replace('_', ' ')}</h3>
+      </div>
+      
+      <div className="flex flex-col items-center mb-8">
+        <div className="text-5xl font-black text-white font-display mb-2 drop-shadow-md">
+          {data?.score ?? 'N/A'}
+          <span className="text-base text-slate-500 font-bold ml-1 opacity-40">/10</span>
+        </div>
+        <ScoreBar score={data?.score ?? 0} />
+      </div>
+
+      <div className="mb-10 text-center flex-1">
+        <p className="text-lg text-slate-300 leading-relaxed font-light italic">
+          {safeRender(data?.summary) ?? 'No summary provided.'}
+        </p>
+      </div>
+      
+      <div className="w-full pt-8 border-t border-white/5 text-left">
+        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6 text-center">Observations</p>
+        <ul className="space-y-4 w-full">
+          {findings.map((finding, idx) => (
+            <li key={idx} className="flex items-start text-sm text-slate-400">
+              <span className="mr-4 text-aurora font-bold text-lg leading-none mt-0.5">/</span>
+              <span className="leading-relaxed">
+                {safeRender(finding)}
+              </span>
+            </li>
+          ))}
+          {findings.length === 0 && <li className="text-slate-500 text-center opacity-50 italic">AI did not provide specific observations for this segment.</li>}
+        </ul>
+      </div>
     </div>
-    
-    <div className="w-full pt-8 border-t border-white/5 text-left">
-      <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6 text-center">Observations</p>
-      <ul className="space-y-4 w-full">
-        {data.findings.map((finding, idx) => (
-          <li key={idx} className="flex items-start text-sm text-slate-400">
-            <span className="mr-4 text-aurora font-bold text-lg leading-none mt-0.5">/</span>
-            <span className="leading-relaxed">{finding}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </div>
-);
+  );
+};
 
 const InsightsPanel = ({ insights }) => {
   const categories = [

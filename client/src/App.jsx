@@ -10,9 +10,7 @@ const ModelSelector = ({ selected, onSelect, disabled }) => {
   const dropdownRef = useRef(null);
 
   const models = [
-    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', desc: 'Fastest & Reliable', icon: Zap, color: 'text-aurora' },
-    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', desc: 'Advanced Logic', icon: Cpu, color: 'text-polar' },
-    { id: 'gemini-2.0-flash-lite-preview-02-05', name: 'Gemini 2.0 Lite', desc: 'High Efficiency', icon: Beaker, color: 'text-cosmic' }
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', desc: 'Working High-Speed Prototype', icon: Zap, color: 'text-aurora' }
   ];
 
   const current = models.find(m => m.id === selected) || models[0];
@@ -75,7 +73,7 @@ function App() {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [selectedModel, setSelectedModel] = useState('gemini-2.0-flash');
+  const [selectedModel, setSelectedModel] = useState('gemini-2.5-flash');
   const [auditData, setAuditData] = useState(null);
 
   const handleAudit = async (e) => {
@@ -108,7 +106,10 @@ function App() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to complete audit');
+        if (data.details && data.details.includes('Quota Exceeded')) {
+          throw new Error('Gemini Quota Exceeded. The free tier for ' + selectedModel + ' is currently full. Please try selecting "Gemini 1.5 Flash" from the dropdown.');
+        }
+        throw new Error(data.error || data.details || 'Failed to complete audit');
       }
 
       setAuditData({
@@ -185,21 +186,26 @@ function App() {
 
       {/* Main Content Area */}
       {auditData && (
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-20 space-y-8 animate-in fade-in duration-700">
+        <main id="audit-results" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-20 space-y-12 animate-in fade-in slide-in-from-top-4 duration-700">
           
           {/* Section 2: Overall Score */}
           <div className="bg-[#121b2e]/80 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.4)] p-8 md:p-10 border border-polar/20 flex flex-col md:flex-row items-center gap-10">
             <div className="shrink-0 relative">
               <div className="absolute inset-0 bg-aurora rounded-full blur-[30px] opacity-20"></div>
               <div className="relative flex flex-col items-center justify-center w-36 h-36 rounded-full border-[6px] border-[#0b1120] bg-gradient-to-br from-[#1a2642] to-[#0b1120] text-aurora shadow-[inset_0_4px_20px_rgba(34,196,160,0.15)]">
-                <span className="text-5xl font-black font-display tracking-tight text-white drop-shadow-[0_2px_10px_rgba(34,196,160,0.5)]">{auditData.ai_insights.overall_score}</span>
+                <span className="text-5xl font-black font-display tracking-tight text-white drop-shadow-[0_2px_10px_rgba(34,196,160,0.5)]">{auditData?.ai_insights?.overall_score ?? '—'}</span>
                 <span className="text-sm font-semibold text-aurora/70 uppercase tracking-widest mt-1">/ 10</span>
               </div>
             </div>
             <div>
-              <h2 className="text-3xl font-bold text-white mb-3 font-display">Overall Assessment for <span className="text-polar font-medium inline-block max-w-full truncate align-bottom" title={auditData.url}>{auditData.url.replace(/^https?:\/\//, '')}</span></h2>
+              <h2 className="text-3xl font-bold text-white mb-3 font-display">Overall Assessment for <span className="text-polar font-medium inline-block max-w-full truncate align-bottom" title={auditData.url}>{auditData?.url?.replace(/^https?:\/\//, '')}</span></h2>
               <p className="text-slate-300 text-lg leading-relaxed font-light">
-                {auditData.ai_insights.overall_summary}
+                {(() => {
+                  const val = auditData?.ai_insights?.overall_summary;
+                  if (!val) return 'No summary available.';
+                  if (typeof val === 'string') return val;
+                  return val.description || val.summary || val.detail || val.text || JSON.stringify(val);
+                })()}
               </p>
             </div>
           </div>

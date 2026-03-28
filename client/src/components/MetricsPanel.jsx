@@ -29,7 +29,7 @@ const MetricsPanel = ({ metrics }) => {
         <MetricCard 
           icon={FileText} 
           title="Word Count" 
-          value={metrics.wordCount.toLocaleString()} 
+          value={metrics?.wordCount?.toLocaleString() || '0'} 
         />
         <MetricCard 
           icon={LayoutTemplate} 
